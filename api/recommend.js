@@ -105,10 +105,11 @@ module.exports = async (req, res) => {
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
-            maxOutputTokens: 1400,
+            maxOutputTokens: 2500,
             temperature: 0.8,
             responseMimeType: "application/json",
-            responseSchema: RECOMMENDATION_SCHEMA
+            responseSchema: RECOMMENDATION_SCHEMA,
+            thinkingConfig: { thinkingLevel: "low" }
           }
         })
       }
@@ -140,6 +141,7 @@ module.exports = async (req, res) => {
 
     const items = extractJsonArray(text);
     if (!items || !items.length) {
+      console.error("Gemini recommend parse fail, finishReason:", candidate && candidate.finishReason, "text:", text.slice(0, 300));
       res.status(502).json({ code: "invalid_json", message: "추천 결과를 정리하지 못했어요." });
       return;
     }

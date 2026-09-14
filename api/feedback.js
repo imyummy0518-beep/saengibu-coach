@@ -71,7 +71,11 @@ module.exports = async (req, res) => {
         },
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 700, temperature: 0.7 }
+          generationConfig: {
+            maxOutputTokens: 1200,
+            temperature: 0.7,
+            thinkingConfig: { thinkingLevel: "low" }
+          }
         })
       }
     );
@@ -101,8 +105,13 @@ module.exports = async (req, res) => {
       .trim();
 
     if (!text) {
+      console.error("Gemini empty text, finishReason:", candidate && candidate.finishReason);
       res.status(502).json({ code: "empty_completion", message: "AI가 응답을 생성하지 못했어요." });
       return;
+    }
+
+    if (candidate && candidate.finishReason === "MAX_TOKENS") {
+      console.error("Gemini response truncated (MAX_TOKENS)");
     }
 
     res.status(200).json({ text });
