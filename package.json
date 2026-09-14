@@ -1,0 +1,6 @@
+{
+  "name": "saengibu-coach",
+  "version": "1.0.0",
+  "private": true,
+  "description": "생기부 코치 - 목표 학과에 맞춘 생기부 작성 도우미 (Vercel 배포용)"
+}
