@@ -105,7 +105,7 @@ module.exports = async (req, res) => {
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
-            maxOutputTokens: 2500,
+            maxOutputTokens: 3200,
             temperature: 0.8,
             responseMimeType: "application/json",
             responseSchema: RECOMMENDATION_SCHEMA,
