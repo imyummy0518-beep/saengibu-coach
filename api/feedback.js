@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = String(process.env.GEMINI_API_KEY || "").trim();
   if (!apiKey) {
     res.status(500).json({
       code: "server_not_configured",
@@ -82,6 +82,7 @@ module.exports = async (req, res) => {
     }
     if (!upstream.ok) {
       const errText = await upstream.text().catch(() => "");
+      console.error("Gemini upstream error", upstream.status, errText.slice(0, 500));
       res.status(502).json({ code: "upstream_error", message: "AI 호출에 실패했어요.", detail: errText.slice(0, 300) });
       return;
     }
@@ -106,6 +107,7 @@ module.exports = async (req, res) => {
 
     res.status(200).json({ text });
   } catch (err) {
+    console.error("Gemini call threw", err && err.message);
     res.status(500).json({ code: "upstream_error", message: "서버 오류가 발생했어요." });
   }
 };
