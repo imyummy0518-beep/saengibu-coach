@@ -5,7 +5,7 @@
 // Calls the Google Gemini API server-side using GEMINI_API_KEY,
 // so the key is never exposed to the browser.
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.6-flash";
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
