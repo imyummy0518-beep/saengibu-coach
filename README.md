@@ -1,75 +1,118 @@
-# 생기부 코치 — 배포 가이드 (Google Gemini API, 무료 버전)
+# 생기부 코치 — 배포 가이드 (Google 로그인 + Firebase + Gemini API, 전부 무료)
 
-로그인 없이 누구나 링크로 들어와서 쓸 수 있고, 실시간 AI 첨삭·추천까지 되는 버전이에요.
-회원가입/활동 기록은 각자의 브라우저에 저장되고, AI 호출만 이 프로젝트의 작은 서버(API)를 거쳐요 — 그래서 Claude 계정이나 구글 로그인 없이도 방문자는 AI 기능을 바로 쓸 수 있습니다.
+이 버전은 이전 버전에서 크게 바뀌었어요.
 
-**Anthropic API 대신 Google Gemini API를 사용해요.** Gemini API는 카드 등록 없이 무료로 키를 받아 쓸 수 있는 "Free tier"가 있어서, 대회 제출처럼 비용을 아예 들이고 싶지 않을 때 적합해요. 다만 무료라는 이유로 생기는 제약도 있으니 아래 "무료 사용량 한도"와 "알아둘 점"을 꼭 읽어주세요.
+- 아이디/비밀번호 대신 **구글 계정으로 로그인**해요 (더 안전해요).
+- 접속하면 바로 로그인 화면이 아니라 **앱 소개 화면**이 먼저 뜨고, "시작하기"를 누르면 로그인으로 넘어가요.
+- **내 작품 페이지**가 생겨서, 수행평가 등 내가 만든 걸 글로 쓰거나 사진·PDF·한글(hwp) 파일로 올릴 수 있어요.
+- 화면 오른쪽 아래 톱니바퀴(⚙️) 버튼으로 **웹 화면 / 폰 화면**을 내 마음대로 고정해서 볼 수 있어요.
+- 데이터(계정·활동기록·추천·작품)는 이제 브라우저가 아니라 **Firebase**라는 구글의 무료 클라우드 서버에 저장돼요. 그래서 같은 구글 계정으로 로그인하면 학교 컴퓨터든 집 PC든 폰이든 내 기록이 그대로 보여요.
 
-이미 GitHub 계정이 있다고 하셨으니, 그 기준으로 안내할게요. 전체 과정은 15~20분 정도 걸려요.
+전체 과정은 30~40분 정도 걸려요 (Firebase 설정이 새로 추가돼서 이전보다 조금 더 걸려요). 이미 GitHub·Vercel·Gemini API 키까지는 설정해두셨다고 가정하고, **새로 필요한 Firebase 설정 위주**로 안내할게요.
 
-## 1. Gemini API 키 발급받기 (무료, 카드 등록 불필요)
+## 1. Firebase 프로젝트 만들기 (무료)
 
-1. https://aistudio.google.com/apikey 접속 후 구글 계정으로 로그인.
-2. **Create API key** 클릭 → 새 프로젝트를 만들거나 기존 프로젝트 선택 → 키 생성.
-3. 생성된 키를 복사해서 안전한 곳에 잠깐 메모해두세요.
-4. 카드 등록이나 결제 정보 입력 없이 바로 무료로 사용할 수 있어요 ("Free tier"는 결제 계정을 연결하지 않은 상태를 말해요).
+1. https://console.firebase.google.com 접속 후 구글 계정으로 로그인.
+2. **프로젝트 추가** 클릭 → 프로젝트 이름 입력(예: `saengibu-coach`) → Google Analytics는 꺼도 괜찮아요 → **프로젝트 만들기**.
+3. 프로젝트가 만들어지면 왼쪽 메뉴에서 **Authentication** 클릭 → **시작하기** → **Sign-in method** 탭 → **Google** 선택 → 사용 설정 켜고 프로젝트 지원 이메일 선택 → **저장**.
+4. 왼쪽 메뉴 **Firestore Database** 클릭 → **데이터베이스 만들기** → 위치는 `asia-northeast3 (서울)` 추천 → **프로덕션 모드로 시작** 선택 → 만들기.
+5. 왼쪽 메뉴 **Storage** 클릭 → **시작하기** → 프로덕션 모드로 시작 → 위치는 Firestore와 같은 리전 → 완료.
 
-## 2. 이 프로젝트를 GitHub에 올리기
+## 2. 보안 규칙 설정하기 (중요 — 반드시 해주세요)
 
-터미널에서 이 폴더로 이동한 뒤:
+기본 상태로 두면 아무나 서로의 데이터를 읽고 쓸 수 있거나, 반대로 아무도 접근을 못 해요. 아래 규칙을 붙여넣어서 **본인 데이터만 본인이 접근**하도록 만들어야 해요.
 
-```bash
-git init
-git add .
-git commit -m "생기부 코치 초기 버전"
+**Firestore 규칙** (Firestore Database → 규칙 탭에서 아래 내용으로 전체 교체 후 게시):
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+  }
+}
 ```
 
-GitHub에서 새 저장소(Repository)를 만든 뒤 (Public/Private 상관없어요), 안내되는 명령어로 푸시하세요. 보통 이런 모양이에요:
+**Storage 규칙** (Storage → 규칙 탭에서 아래 내용으로 전체 교체 후 게시):
 
-```bash
-git remote add origin https://github.com/내아이디/saengibu-coach.git
-git branch -M main
-git push -u origin main
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /works/{uid}/{fileName} {
+      allow read, write: if request.auth != null && request.auth.uid == uid
+                          && request.resource.size < 10 * 1024 * 1024;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
 ```
 
-## 3. Vercel에 배포하기
+## 3. 웹 앱 등록하고 설정값 가져오기
 
-1. https://vercel.com 접속 → **Continue with GitHub** 로 가입/로그인 (GitHub 계정 그대로 쓰면 돼요, 무료).
-2. **Add New → Project** 클릭 → 방금 올린 `saengibu-coach` 저장소 선택 → **Import**.
-3. Framework Preset은 **Other**(또는 자동 감지된 값 그대로) 두고, 별다른 설정 변경 없이 **Deploy** 클릭.
-   - 이 배포는 아직 API 키가 없어서 AI 기능은 에러가 날 거예요. 정상이니 다음 단계로 진행하세요.
-4. 배포가 끝나면 프로젝트 화면에서 **Settings → Environment Variables** 로 이동.
-5. Key에 `GEMINI_API_KEY`, Value에 1단계에서 복사해둔 키를 붙여넣고, Production/Preview/Development 모두 체크한 뒤 **Save**.
-6. **Deployments** 탭에서 최신 배포 옆 **⋯ → Redeploy** 를 눌러 환경변수를 반영해서 다시 배포하세요.
+1. Firebase 콘솔 왼쪽 위 **⚙️ (프로젝트 설정)** 클릭 → **프로젝트 설정**.
+2. 아래로 스크롤해서 **내 앱** 섹션 → **`</>`(웹)** 아이콘 클릭.
+3. 앱 닉네임 입력(예: `생기부 코치 웹`) → **Firebase Hosting 설정**은 체크하지 않아도 돼요 (Vercel을 쓸 거라서) → **앱 등록**.
+4. 화면에 나오는 `firebaseConfig = { apiKey: "...", authDomain: "...", ... }` 값을 전체 복사해두세요.
 
-배포가 끝나면 `https://saengibu-coach-아무개.vercel.app` 같은 주소가 생겨요. **이 링크가 진짜 공개 링크예요** — 로그인 없이 아무나 들어와서 회원가입하고, AI 첨삭·추천을 받을 수 있어요.
+## 4. index.html에 설정값 붙여넣기
 
-## 4. 확인해보기
+`public/index.html` 파일을 열어서 `<script>` 태그 안, 맨 위쪽에 있는 이 부분을 찾으세요:
 
-- 배포된 링크를 시크릿 창(또는 다른 기기)으로 열어서 회원가입 → 활동 기록 작성 → "AI 피드백 받기" 까지 눌러서 실제로 응답이 오는지 확인하세요.
-- 안 되면 Vercel 프로젝트의 **Deployments → 해당 배포 → Functions** 탭에서 `/api/feedback`, `/api/recommend` 로그를 확인하면 원인(예: 키 오타)을 알 수 있어요.
+```js
+var firebaseConfig = {
+  apiKey: "여기에_Firebase_apiKey_붙여넣기",
+  authDomain: "your-project-id.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project-id.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:xxxxxxxxxxxxxxxxxxxxxx"
+};
+```
 
-## 무료 사용량 한도 (중요)
+3단계에서 복사한 값으로 이 6개 항목을 전부 바꿔주세요. (이 값들은 비밀 키가 아니라 공개돼도 되는 설정값이에요 — Gemini API 키와는 다르게 보안 규칙이 실제 보호 역할을 해요.)
 
-Gemini API 무료 tier는 **키(프로젝트) 하나 기준으로** Flash 계열 모델은 대략 아래 정도의 한도가 있어요 (2026년 9월 기준, 이 앱이 쓰는 `gemini-3.6-flash` 모델 기준). 방문자 한 명당 한도가 아니라 **링크에 들어온 모든 사람이 이 한도를 함께 나눠 써요.**
+## 5. GitHub에 올리고 Vercel 재배포
 
-- 분당 요청 수(RPM): 약 10회
-- 하루 요청 수(RPD): 약 1,500회
-- 분당 토큰 수(TPM): 약 250,000
+수정한 `public/index.html` 파일을 GitHub 저장소의 같은 경로에 업로드(덮어쓰기)하면 Vercel이 자동으로 재배포해요. (이전에 안내한 것과 같은 방법 — **Add file → Upload files**)
 
-정확한 최신 수치는 구글이 수시로 바꿀 수 있어서, https://aistudio.google.com/rate-limit 에서 내 키 기준 실제 한도를 확인하는 게 가장 정확해요.
+## 6. 배포된 도메인을 구글 로그인에 허용하기 (중요 — 안 하면 로그인 안 됨)
 
-즉 대회 심사 시간대에 한꺼번에 여러 명이 몰리면 "요청이 많아요" 오류(`rate_limited`)가 뜰 수 있어요. 이 앱은 그 상황을 감지해서 사용자에게 "잠시 후 다시 시도해주세요"라고 안내하도록 이미 만들어져 있어요. 발표·심사 당일처럼 접속이 몰릴 시간이 예상되면, 미리 https://aistudio.google.com/apikey 에서 결제 계정을 연결해두면(소액 과금 방식으로 전환) 한도가 크게 올라가지만, 완전 무료를 유지하려면 위 한도 안에서 쓰는 걸 권장해요.
+1. Vercel에서 배포된 주소(예: `saengibu-coach.vercel.app`)를 복사하세요.
+2. Firebase 콘솔 → **Authentication → Settings → 승인된 도메인** 탭으로 이동.
+3. **도메인 추가** 클릭 → Vercel 주소(`saengibu-coach.vercel.app`, `https://` 없이 도메인만)를 입력하고 추가.
+4. 이 단계를 빼먹으면 로그인 버튼을 눌렀을 때 "이 주소는 아직 구글 로그인이 허용되지 않았어요" 오류가 떠요.
 
-## 알아둘 점 (무료 tier 특성)
+## 7. 확인해보기
 
-- **무료 tier는 카드 등록이 필요 없고 비용이 청구되지 않아요.** 한도를 넘으면 과금되는 게 아니라 그 요청이 그냥 실패해요(429 오류) — 그래서 "예상 밖의 비용" 걱정 없이 안전하게 쓸 수 있어요.
-- **구글이 무료 tier로 오간 입력·출력 내용을 자사 서비스 개선에 활용할 수 있다고 밝히고 있어요.** 이 앱은 애초에 실명·사진 등 개인정보를 적지 않도록 설계되어 있으니 큰 문제는 아니지만, 참고해두세요. (결제 계정을 연결한 유료 사용은 이 정책이 다르게 적용돼요.)
-- 한도나 모델 종류는 구글이 언제든 바꿀 수 있어요. 실제로 이전에 쓰던 `gemini-2.5-flash` 모델이 "신규 사용자에게 더 이상 제공되지 않음" 처리되어 `gemini-3.6-flash`로 바꾼 적이 있어요. 최신 정보는 https://ai.google.dev/gemini-api/docs/pricing 와 https://aistudio.google.com/rate-limit 에서 확인할 수 있어요.
+1. 배포된 링크를 시크릿 창으로 열어보세요. 앱 소개 화면 → "시작하기" → 구글 로그인 화면이 순서대로 나와야 해요.
+2. 구글 계정으로 로그인하면 처음엔 "목표를 알려주세요" 화면이 떠요. 희망 대학교·학과를 입력하고 시작하세요.
+3. 활동 기록을 하나 써보고 "AI 피드백 받기"까지 확인하세요.
+4. **내 작품 페이지** 탭에서 글이나 파일을 올려보고, 목록에 잘 보이는지 확인하세요.
+5. 로그아웃한 뒤 다른 브라우저(또는 시크릿 창)에서 같은 구글 계정으로 다시 로그인해서, 활동 기록과 작품이 그대로 보이는지 확인하세요 (이전 버전과 다르게 이제는 기기를 바꿔도 데이터가 유지돼요).
+
+## 화면 설정 (웹 화면 / 폰 화면)
+
+화면 오른쪽 아래의 ⚙️ 버튼을 누르면 "자동 / 웹(컴퓨터) 화면으로 보기 / 폰 화면으로 보기"를 고를 수 있어요. 이 설정은 그 기기·브라우저에만 저장돼요(로그인 계정과는 무관). 예를 들어 컴퓨터로 폰 화면이 어떻게 보이는지 미리 보고 싶을 때 유용해요.
+
+## Firebase 무료 사용량 한도 (Spark 요금제)
+
+Firebase는 신용카드 등록 없이 아래 한도까지 완전 무료예요. 학교 대회 규모라면 넉넉해요.
+
+- Firestore: 저장 용량 1GiB, 하루 읽기 5만 회, 하루 쓰기 2만 회
+- Storage: 저장 용량 5GB, 하루 다운로드 1GB
+- Authentication(구글 로그인): 별도 한도 없이 무료
+
+한도를 넘으면 그날은 일시적으로 요청이 실패할 뿐, 자동으로 요금이 청구되지 않아요(Spark 요금제는 애초에 결제 수단을 등록하지 않는 요금제예요).
 
 ## 참고
 
-- `api/feedback.js`, `api/recommend.js` 가 AI를 호출하는 서버 코드예요. API 키는 Vercel 환경변수에만 있고, 브라우저(사용자 화면)에는 절대 노출되지 않아요.
-- `public/index.html` 이 화면 전체(회원가입/로그인/작성/추천)예요. 계정과 활동 기록은 서버가 아니라 **각 방문자의 브라우저(localStorage)** 에 저장돼요 — 즉 여러 명이 같은 계정 목록을 공유하는 게 아니라, 각자 자기 브라우저 안에서 독립적으로 사용하는 구조예요.
-- 나중에 문구나 프롬프트를 수정하고 싶으면 해당 파일을 고친 뒤 GitHub에 다시 `git push` 하면 Vercel이 자동으로 재배포해요.
-- 만약 나중에 `gemini-3.6-flash` 모델도 "더 이상 사용할 수 없음" 오류가 뜨면, https://ai.google.dev/gemini-api/docs/models 에서 현재 사용 가능한 최신 Flash 계열 모델 이름을 확인한 뒤 `api/feedback.js`, `api/recommend.js`의 `GEMINI_MODEL` 값을 그 이름으로 바꾸면 돼요. Vercel Logs에 뜨는 오류 메시지가 보통 정확한 대체 모델 이름을 직접 알려줘요.
+- `api/feedback.js`, `api/recommend.js`는 이전과 동일하게 Google Gemini API를 호출하는 서버 코드예요. 이번 변경과는 무관하니 그대로 두면 돼요.
+- `public/index.html`이 화면 전체(소개·로그인·목표설정·본문·작품 페이지)예요. 계정·활동기록·추천·작품은 이제 Firebase(Firestore + Storage)에 저장돼서, 로그인한 구글 계정을 기준으로 어떤 기기에서도 이어져요.
+- 나중에 문구나 프롬프트를 수정하고 싶으면 해당 파일을 고친 뒤 GitHub에 다시 올리면 Vercel이 자동으로 재배포해요.
+- 로그인이 안 되면 가장 먼저 6단계(승인된 도메인)를 확인하세요. 가장 흔한 실수예요.

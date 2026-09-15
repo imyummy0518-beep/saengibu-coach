@@ -76,8 +76,8 @@
   /* ---------- layout shells ---------- */
   .wrap { max-width: 880px; margin: 0 auto; padding: 20px 20px 80px; }
 
-  /* ---------- auth screen ---------- */
-  #authScreen {
+  /* ---------- centered screen shells (intro / auth / goal setup / loading) ---------- */
+  .center-screen {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -123,30 +123,14 @@
     padding: 8px 10px;
     margin: 0 0 22px;
   }
-  .auth-tabs {
-    display: flex;
-    background: var(--bg-sunken);
-    border-radius: 10px;
-    padding: 4px;
-    margin-bottom: 22px;
+  .intro-list {
+    text-align: left;
+    margin-top: 18px;
   }
-  .auth-tab {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 9px 0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ink-soft);
-    cursor: pointer;
-  }
-  .auth-tab.active {
-    background: var(--bg-elevated);
-    color: var(--navy);
-    font-weight: 700;
-    box-shadow: 0 1px 3px rgba(29,36,48,0.12);
-  }
+  .intro-list strong { color: var(--ink); }
+  .intro-list ul { margin: 8px 0 0; padding-left: 18px; }
+  .intro-list li { margin-bottom: 6px; font-size: 13px; color: var(--ink-soft); }
+
   .field { margin-bottom: 16px; }
   .field label {
     display: block;
@@ -177,7 +161,7 @@
   .field-row .field { flex: 1; }
 
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     border: none;
     border-radius: 9px;
     padding: 10px 16px;
@@ -197,6 +181,13 @@
   .btn-rose { background: transparent; color: var(--ink-faint); }
   .btn-rose:hover:not(:disabled) { color: var(--rose); }
   .btn-sm { padding: 6px 11px; font-size: 12.5px; border-radius: 7px; }
+  .btn-google {
+    width: 100%; padding: 11px; font-size: 14.5px;
+    background: var(--bg-elevated);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-google:hover:not(:disabled) { background: var(--bg-sunken); }
 
   .error-msg {
     background: var(--rose-tint);
@@ -226,6 +217,7 @@
   .brand-name { font-size: 18px; margin: 0; }
   .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); }
   .topbar-user .uname { font-weight: 700; color: var(--ink); }
+  .topbar-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
   .goal-card {
     background: var(--navy-tint);
@@ -258,9 +250,11 @@
     border-radius: 12px;
     padding: 5px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
   }
   .view-tab {
     flex: 1;
+    min-width: 120px;
     border: none;
     background: transparent;
     padding: 12px 10px;
@@ -403,73 +397,141 @@
 
   .inline-confirm { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--rose); }
 
+  .work-file-link {
+    display: inline-block;
+    color: var(--navy);
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-decoration: none;
+  }
+  .work-file-link:hover { text-decoration: underline; }
+
   footer.app-footer {
     max-width: 880px; margin: 8px auto 0; padding: 0 20px;
     font-size: 11.5px; color: var(--ink-faint); text-align: center; line-height: 1.7;
   }
 
+  /* ---------- settings (screen-mode) ---------- */
+  .fab-settings {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+    color: var(--ink-soft);
+    font-size: 19px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    z-index: 40;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,18,25,0.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal-box {
+    width: 100%; max-width: 340px;
+    background: var(--bg-elevated);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 22px 22px 18px;
+  }
+  .modal-box .checkbox-row { margin: 0 0 12px; }
+
+  /* ---------- forced layout modes (screen-mode setting) ---------- */
+  body.force-mobile .wrap,
+  body.force-mobile .topbar-inner,
+  body.force-mobile footer.app-footer {
+    max-width: 420px !important;
+  }
+  body.force-mobile .auth-card { max-width: 100% !important; padding: 28px 20px 24px !important; }
+  body.force-mobile .field-row { flex-direction: column !important; gap: 0 !important; }
+  body.force-mobile .view-tabs { flex-direction: column; }
+  body.force-mobile .goal-card { flex-direction: column; align-items: flex-start; }
+
+  body.force-desktop .wrap,
+  body.force-desktop .topbar-inner,
+  body.force-desktop footer.app-footer {
+    max-width: 880px !important;
+  }
+  body.force-desktop .auth-card { padding: 36px 32px 32px !important; }
+  body.force-desktop .field-row { flex-direction: row !important; gap: 12px !important; }
+  body.force-desktop .view-tabs { flex-direction: row; }
+  body.force-desktop .goal-card { flex-direction: row; align-items: center; }
+
   @media (max-width: 480px) {
-    .field-row { flex-direction: column; gap: 0; }
-    .auth-card { padding: 28px 20px 24px; }
+    body:not(.force-desktop) .field-row { flex-direction: column; gap: 0; }
+    body:not(.force-desktop) .auth-card { padding: 28px 20px 24px; }
   }
 </style>
 </head>
 <body>
 
-<div id="authScreen">
+<div id="loadingScreen" class="center-screen">
+  <div style="color: var(--ink-faint); font-size: 13.5px;">불러오는 중...</div>
+</div>
+
+<div id="introScreen" class="center-screen" hidden>
   <div class="auth-card">
     <div class="auth-mark">生</div>
     <h1 class="auth-title">생기부 코치</h1>
     <p class="auth-sub">목표 학과에 맞춰 생기부 초고를 다듬는 나만의 노트</p>
-    <p class="auth-note">가입 정보와 기록은 지금 사용 중인 이 브라우저에만 저장돼요. 로그인 없이 누구나 바로 시작할 수 있어요.</p>
-
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" type="button">로그인</button>
-      <button class="auth-tab" id="tabSignup" type="button">회원가입</button>
+    <div class="intro-list">
+      <strong>이런 걸 도와드려요.</strong>
+      <ul>
+        <li>내가 쓴 생기부 초고를 목표 대학·학과에 맞춰 AI가 첨삭해줘요.</li>
+        <li>아직 하지 않은 활동 중 추가하면 좋은 것을 추천하고, 준비물·진행 방법까지 알려줘요.</li>
+        <li>수행평가 등 내가 만든 작품을 모아두는 '내 작품 페이지'도 있어요 (글, 사진, PDF, 한글파일).</li>
+        <li>실명·사진 등 개인정보는 절대 입력하지 않도록 안내해요.</li>
+      </ul>
     </div>
+    <p class="auth-note" style="margin-top: 16px;">구글 계정으로 로그인하면 어떤 기기에서든 내 기록을 이어서 볼 수 있어요.</p>
+    <button class="btn btn-primary" id="introStartBtn" type="button">시작하기</button>
+  </div>
+</div>
 
+<div id="authScreen" class="center-screen" hidden>
+  <div class="auth-card">
+    <div class="auth-mark">生</div>
+    <h1 class="auth-title">생기부 코치</h1>
+    <p class="auth-sub">구글 계정으로 안전하게 로그인하세요</p>
+    <p class="auth-note">따로 비밀번호를 만들지 않아도 돼요. 지금 쓰는 구글 계정으로 바로 시작할 수 있어요.</p>
     <div id="authError" class="error-msg" hidden></div>
+    <button class="btn btn-google" id="googleSignInBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      <span>Google 계정으로 로그인</span>
+    </button>
+    <button class="btn btn-ghost" id="backToIntroBtn" type="button" style="width:100%; margin-top:10px;">← 설명 다시 보기</button>
+  </div>
+</div>
 
-    <!-- LOGIN -->
-    <form id="loginForm">
+<div id="goalSetupScreen" class="center-screen" hidden>
+  <div class="auth-card">
+    <div class="auth-mark">生</div>
+    <h1 class="auth-title">목표를 알려주세요</h1>
+    <p class="auth-sub">목표에 맞춰 AI가 첨삭·추천을 해드려요</p>
+    <div id="goalSetupError" class="error-msg" hidden></div>
+    <form id="goalSetupForm">
       <div class="field">
-        <label for="loginId">아이디</label>
-        <input id="loginId" autocomplete="username" />
+        <label for="gsSchool">희망 대학교</label>
+        <input id="gsSchool" placeholder="예: 성균관대학교" />
       </div>
       <div class="field">
-        <label for="loginPw">비밀번호</label>
-        <input id="loginPw" type="password" autocomplete="current-password" />
-      </div>
-      <button class="btn btn-primary" type="submit">로그인</button>
-    </form>
-
-    <!-- SIGNUP -->
-    <form id="signupForm" hidden>
-      <div class="field">
-        <label for="suId">아이디</label>
-        <input id="suId" autocomplete="username" />
-        <div class="hint">실명 대신 별명(닉네임)을 사용해주세요.</div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="suPw">비밀번호</label>
-          <input id="suPw" type="password" autocomplete="new-password" />
-        </div>
-        <div class="field">
-          <label for="suPw2">비밀번호 확인</label>
-          <input id="suPw2" type="password" autocomplete="new-password" />
-        </div>
-      </div>
-      <div class="field">
-        <label for="suSchool">희망 대학교</label>
-        <input id="suSchool" placeholder="예: 성균관대학교" />
-      </div>
-      <div class="field">
-        <label for="suMajor">희망 학과</label>
-        <input id="suMajor" placeholder="예: 인공지능학과" />
+        <label for="gsMajor">희망 학과</label>
+        <input id="gsMajor" placeholder="예: 인공지능학과" />
         <div class="hint">목표를 적어두면 AI가 학과에 맞춘 피드백을 드려요.</div>
       </div>
-      <button class="btn btn-primary" type="submit">회원가입</button>
+      <button class="btn btn-primary" type="submit">시작하기</button>
     </form>
   </div>
 </div>
@@ -482,6 +544,7 @@
         <h1 class="brand-name">생기부 코치</h1>
       </div>
       <div class="topbar-user">
+        <img id="topAvatar" class="topbar-avatar" hidden alt="" />
         <span>안녕하세요, <span class="uname" id="topUsername"></span>님</span>
         <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">로그아웃</button>
       </div>
@@ -502,6 +565,7 @@
     <div class="view-tabs" id="viewTabs">
       <button class="view-tab active" data-view="feedback" type="button">생기부 쓰기 피드백</button>
       <button class="view-tab" data-view="recommend" type="button">필요한 추가 활동</button>
+      <button class="view-tab" data-view="works" type="button">내 작품 페이지</button>
     </div>
 
     <!-- ===== FEEDBACK VIEW ===== -->
@@ -562,18 +626,87 @@
 
       <div id="recommendList"></div>
     </div>
+
+    <!-- ===== WORKS VIEW ===== -->
+    <div id="worksView" hidden>
+      <div class="card">
+        <h2>내 작품 올리기</h2>
+        <div class="guideline-box">
+          <strong>수행평가나 직접 만든 작품을 올려보세요.</strong> 글로 바로 써도 되고, 사진·PDF·한글(hwp) 파일을 첨부해도 돼요. 파일은 10MB 이하만 올릴 수 있어요.
+        </div>
+        <div class="field">
+          <label for="workTitle">제목</label>
+          <input id="workTitle" placeholder="예: 과학 탐구보고서 - 식물 생장 실험" />
+        </div>
+        <div class="field">
+          <label for="workText">직접 작성 (선택)</label>
+          <textarea id="workText" class="textarea-edit" placeholder="내용을 직접 입력하려면 여기에 작성하세요."></textarea>
+        </div>
+        <div class="field">
+          <label for="workFile">파일 첨부 (선택)</label>
+          <input id="workFile" type="file" accept="image/*,.pdf,.hwp,.hwpx" />
+          <div class="hint">사진, PDF, 한글 파일을 올릴 수 있어요 (최대 10MB). 글과 파일을 함께 첨부해도 돼요.</div>
+        </div>
+        <div id="workError" class="error-msg" hidden></div>
+        <button class="btn btn-primary" id="workSaveBtn" type="button" style="width:auto; padding:10px 20px;">작품 올리기</button>
+        <div id="workStatus" class="hint" style="margin-top:10px;"></div>
+      </div>
+
+      <div id="worksList"></div>
+    </div>
   </div>
 
   <footer class="app-footer">
     이 도구는 생기부 초고 작성 연습을 돕기 위한 개인용 노트이며 나이스(NEIS)와 연동되지 않습니다.<br />
     AI 피드백은 참고용입니다 — 최종 작성 전 반드시 담임 선생님과 함께 확인하세요.<br />
-    계정과 기록은 이 브라우저에만 저장돼요. 다른 기기·브라우저로 열면 새 계정으로 시작됩니다.
+    구글 계정으로 로그인해 저장하므로, 같은 계정이면 어떤 기기에서 열어도 내 기록이 이어져요.
   </footer>
 </div>
+
+<button id="settingsFab" class="fab-settings" type="button" title="화면 설정" aria-label="화면 설정">⚙️</button>
+
+<div id="settingsModal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <h3 style="margin:0 0 4px;">화면 설정</h3>
+    <p style="font-size:13px; color:var(--ink-soft); margin:0 0 16px;">이 기기에서 화면을 어떻게 보여줄지 선택하세요.</p>
+    <label class="checkbox-row" style="align-items:center;">
+      <input type="radio" name="layoutMode" value="auto" />
+      <span>자동 (내 기기에 맞게)</span>
+    </label>
+    <label class="checkbox-row" style="align-items:center;">
+      <input type="radio" name="layoutMode" value="desktop" />
+      <span>웹(컴퓨터) 화면으로 보기</span>
+    </label>
+    <label class="checkbox-row" style="align-items:center;">
+      <input type="radio" name="layoutMode" value="mobile" />
+      <span>폰 화면으로 보기</span>
+    </label>
+    <button class="btn btn-ghost" id="settingsCloseBtn" type="button" style="width:100%; margin-top:8px;">닫기</button>
+  </div>
+</div>
+
+<!-- Firebase SDK (compat build) -->
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-storage-compat.js"></script>
 
 <script>
 (function () {
   "use strict";
+
+  /* ====================================================================
+     Firebase 설정 — Firebase 콘솔의 "프로젝트 설정 > 내 앱"에서 복사해서
+     아래 값을 채워주세요. (README.md 참고)
+     ==================================================================== */
+  var firebaseConfig = {
+    apiKey: "여기에_Firebase_apiKey_붙여넣기",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "000000000000",
+    appId: "1:000000000000:web:xxxxxxxxxxxxxxxxxxxxxx"
+  };
 
   var CATEGORIES = {
     autonomy: { label: "자율·자치활동", color: "#3E6AA5" },
@@ -585,53 +718,25 @@
 
   var SURNAMES = "김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구민진기".split("");
 
-  /* ---------------- local storage (per-browser, no login/org needed) ---------------- */
-  var USERS_KEY = "sgb_v1_users";
-  var ENTRIES_KEY = "sgb_v1_entries";
-  var RECS_KEY = "sgb_v1_recommendations";
-  var SESSION_KEY = "sgb_v1_session";
-  var LAST_USER_KEY = "sgb_v1_last_user";
+  var LAYOUT_KEY = "sgb_layout_mode";
+  var MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-  function storageAvailable() {
-    try {
-      var k = "__sgb_probe__";
-      localStorage.setItem(k, "1");
-      localStorage.removeItem(k);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  function readJSON(key, fallback) {
-    try {
-      var raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    } catch (e) {
-      return fallback;
-    }
-  }
-  function writeJSON(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
   function genId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   }
 
   var state = {
-    userId: null,
-    username: null,
+    uid: null,
+    displayName: "",
     targetSchool: "",
     targetMajor: "",
     entries: [],
     filter: "all",
     view: "feedback",
     recommendations: [],
+    works: [],
     confirmingDeleteRecId: null,
+    confirmingDeleteWorkId: null,
     editingId: null,
     confirmingDeleteId: null
   };
@@ -677,27 +782,6 @@
     }[code] || "요청 처리 중 문제가 발생했어요. 다시 시도해주세요.";
   }
 
-  function toHex(buffer) {
-    var bytes = new Uint8Array(buffer);
-    var hex = "";
-    for (var i = 0; i < bytes.length; i++) hex += bytes[i].toString(16).padStart(2, "0");
-    return hex;
-  }
-  async function sha256Hex(text) {
-    var data = new TextEncoder().encode(text);
-    var hash = await crypto.subtle.digest("SHA-256", data);
-    return toHex(hash);
-  }
-  function randomSalt() {
-    var bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    return toHex(bytes.buffer);
-  }
-  async function computeUserId(username) {
-    var normalized = username.trim().toLowerCase();
-    return sha256Hex("uid:" + normalized);
-  }
-
   function detectNameLike(text) {
     var tokens = text.split(/[^가-힣]+/).filter(Boolean);
     var found = [];
@@ -714,128 +798,83 @@
     return d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getDate()).padStart(2, "0");
   }
 
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* ---------------- screen switching ---------------- */
+  var SCREENS = ["loadingScreen", "introScreen", "authScreen", "goalSetupScreen", "appScreen"];
+  function showScreen(id) {
+    SCREENS.forEach(function (s) { $(s).hidden = s !== id; });
+  }
+
   function showAuthError(msg) {
     var box = $("authError");
     box.textContent = msg;
     box.hidden = false;
   }
-  function clearAuthError() {
-    $("authError").hidden = true;
+  function clearAuthError() { $("authError").hidden = true; }
+
+  function showGoalSetupError(msg) {
+    var box = $("goalSetupError");
+    box.textContent = msg;
+    box.hidden = false;
+  }
+  function clearGoalSetupError() { $("goalSetupError").hidden = true; }
+
+  function showWorkError(msg) {
+    var box = $("workError");
+    box.textContent = msg;
+    box.hidden = false;
   }
 
-  /* ---------------- auth tabs ---------------- */
-  $("tabLogin").addEventListener("click", function () {
-    $("tabLogin").classList.add("active");
-    $("tabSignup").classList.remove("active");
-    $("loginForm").hidden = false;
-    $("signupForm").hidden = true;
-    clearAuthError();
-  });
-  $("tabSignup").addEventListener("click", function () {
-    $("tabSignup").classList.add("active");
-    $("tabLogin").classList.remove("active");
-    $("signupForm").hidden = false;
-    $("loginForm").hidden = true;
-    clearAuthError();
-  });
-
-  /* ---------------- signup ---------------- */
-  $("signupForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    clearAuthError();
-    if (!storageAvailable()) { showAuthError("이 브라우저에서는 데이터를 저장할 수 없어요. 시크릿 모드가 아닌 창에서 열어주세요."); return; }
-
-    var username = $("suId").value.trim();
-    var pw = $("suPw").value;
-    var pw2 = $("suPw2").value;
-    var school = $("suSchool").value.trim();
-    var major = $("suMajor").value.trim();
-
-    if (!username) return showAuthError("아이디를 입력해주세요.");
-    if (pw.length < 4) return showAuthError("비밀번호는 4자 이상 입력해주세요.");
-    if (pw !== pw2) return showAuthError("비밀번호가 일치하지 않습니다.");
-    if (!school || !major) return showAuthError("희망 대학교와 희망 학과를 입력해주세요.");
-
-    var submitBtn = e.target.querySelector("button[type=submit]");
-    submitBtn.disabled = true;
-    try {
-      var uid = await computeUserId(username);
-      var users = readJSON(USERS_KEY, {});
-      if (users[uid]) {
-        showAuthError("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
-        return;
-      }
-      var salt = randomSalt();
-      var passwordHash = await sha256Hex(salt + pw);
-      users[uid] = {
-        username: username,
-        passwordHash: passwordHash,
-        salt: salt,
-        targetSchool: school,
-        targetMajor: major,
-        createdAt: Date.now()
-      };
-      writeJSON(USERS_KEY, users);
-      loginSuccess(uid, username, school, major);
-    } catch (err) {
-      showAuthError("회원가입 중 문제가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      submitBtn.disabled = false;
+  /* ---------------- screen-mode (web / phone) setting ---------------- */
+  function applyLayoutMode(mode) {
+    document.body.classList.remove("force-desktop", "force-mobile");
+    var meta = document.querySelector('meta[name="viewport"]');
+    if (mode === "desktop") {
+      document.body.classList.add("force-desktop");
+      if (meta) meta.setAttribute("content", "width=900, initial-scale=0.4, user-scalable=yes");
+    } else if (mode === "mobile") {
+      document.body.classList.add("force-mobile");
+      if (meta) meta.setAttribute("content", "width=device-width, initial-scale=1.0");
+    } else {
+      if (meta) meta.setAttribute("content", "width=device-width, initial-scale=1.0");
     }
-  });
-
-  /* ---------------- login ---------------- */
-  $("loginForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    clearAuthError();
-    if (!storageAvailable()) { showAuthError("이 브라우저에서는 데이터를 저장할 수 없어요. 시크릿 모드가 아닌 창에서 열어주세요."); return; }
-
-    var username = $("loginId").value.trim();
-    var pw = $("loginPw").value;
-    if (!username || !pw) return showAuthError("아이디와 비밀번호를 입력해주세요.");
-
-    var submitBtn = e.target.querySelector("button[type=submit]");
-    submitBtn.disabled = true;
-    try {
-      var uid = await computeUserId(username);
-      var users = readJSON(USERS_KEY, {});
-      var rec = users[uid];
-      if (!rec) { showAuthError("아이디 또는 비밀번호가 올바르지 않습니다."); return; }
-      var hash = await sha256Hex(rec.salt + pw);
-      if (hash !== rec.passwordHash) { showAuthError("아이디 또는 비밀번호가 올바르지 않습니다."); return; }
-      loginSuccess(uid, rec.username, rec.targetSchool, rec.targetMajor);
-    } catch (err) {
-      showAuthError("로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
-
-  function loginSuccess(uid, username, school, major) {
-    state.userId = uid;
-    state.username = username;
-    state.targetSchool = school;
-    state.targetMajor = major;
-    try {
-      localStorage.setItem(LAST_USER_KEY, username);
-      localStorage.setItem(SESSION_KEY, uid);
-    } catch (e) {}
-    enterApp();
   }
-
-  $("logoutBtn").addEventListener("click", function () {
-    state.userId = null;
-    state.username = null;
-    state.entries = [];
-    state.recommendations = [];
-    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
-    $("appScreen").hidden = true;
-    $("authScreen").hidden = false;
-    $("loginId").value = "";
-    $("loginPw").value = "";
+  function loadLayoutMode() {
+    var mode = "auto";
+    try { mode = localStorage.getItem(LAYOUT_KEY) || "auto"; } catch (e) {}
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="layoutMode"]'), function (r) {
+      r.checked = (r.value === mode);
+    });
+    applyLayoutMode(mode);
+  }
+  $("settingsFab").addEventListener("click", function () { $("settingsModal").hidden = false; });
+  $("settingsCloseBtn").addEventListener("click", function () { $("settingsModal").hidden = true; });
+  $("settingsModal").addEventListener("click", function (e) {
+    if (e.target === $("settingsModal")) $("settingsModal").hidden = true;
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="layoutMode"]'), function (r) {
+    r.addEventListener("change", function () {
+      if (!this.checked) return;
+      try { localStorage.setItem(LAYOUT_KEY, this.value); } catch (e) {}
+      applyLayoutMode(this.value);
+    });
   });
 
-  /* ---------------- view switching ---------------- */
+  /* ---------------- intro / auth navigation ---------------- */
+  $("introStartBtn").addEventListener("click", function () {
+    clearAuthError();
+    showScreen("authScreen");
+  });
+  $("backToIntroBtn").addEventListener("click", function () {
+    showScreen("introScreen");
+  });
+
+  /* ---------------- view switching (feedback / recommend / works) ---------------- */
   $("viewTabs").addEventListener("click", function (e) {
     var btn = e.target.closest(".view-tab");
     if (!btn) return;
@@ -843,7 +882,170 @@
     Array.prototype.forEach.call($("viewTabs").children, function (c) { c.classList.toggle("active", c === btn); });
     $("feedbackView").hidden = state.view !== "feedback";
     $("recommendView").hidden = state.view !== "recommend";
+    $("worksView").hidden = state.view !== "works";
   });
+
+  /* ---------------- composer (activity entry) ---------------- */
+  $("entryCategory").addEventListener("change", function () {
+    $("subjectField").hidden = this.value !== "subject";
+  });
+  $("entryContent").addEventListener("input", updateComposerState);
+  $("entryConfirm").addEventListener("change", updateComposerState);
+
+  function updateComposerState() {
+    var content = $("entryContent").value.trim();
+    var names = detectNameLike(content);
+    var warnBox = $("entryWarn");
+    if (names.length) {
+      warnBox.hidden = false;
+      warnBox.textContent = "⚠ '" + names.join("', '") + "' 처럼 이름으로 보이는 표현이 있어요. 실제 이름이라면 지워주세요.";
+    } else {
+      warnBox.hidden = true;
+    }
+    $("entryHint").textContent = content.length + "자";
+    $("entrySaveBtn").disabled = !(content.length > 0 && $("entryConfirm").checked);
+  }
+
+  /* ---------------- filters ---------------- */
+  $("filterRow").addEventListener("click", function (e) {
+    var btn = e.target.closest(".chip");
+    if (!btn) return;
+    state.filter = btn.dataset.filter;
+    Array.prototype.forEach.call($("filterRow").children, function (c) { c.classList.toggle("active", c === btn); });
+    renderEntries();
+  });
+
+  /* ---------------- Firebase init ---------------- */
+  var configured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf("여기에") === -1;
+  var auth = null, db = null, storage = null;
+  var unsubUserDoc = null, unsubEntries = null, unsubRecs = null, unsubWorks = null;
+
+  if (!configured) {
+    $("loadingScreen").innerHTML =
+      '<div style="max-width:420px; text-align:center; padding:20px;">' +
+      '<p style="font-weight:700; margin-bottom:8px;">Firebase 설정이 필요해요</p>' +
+      '<p style="font-size:13px; color:var(--ink-soft);">index.html 안의 firebaseConfig 값을 채워야 로그인·저장 기능이 작동해요. README.md의 안내를 참고하세요.</p>' +
+      '</div>';
+  } else {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    storage = firebase.storage();
+  }
+
+  function detachAllListeners() {
+    if (unsubUserDoc) { unsubUserDoc(); unsubUserDoc = null; }
+    if (unsubEntries) { unsubEntries(); unsubEntries = null; }
+    if (unsubRecs) { unsubRecs(); unsubRecs = null; }
+    if (unsubWorks) { unsubWorks(); unsubWorks = null; }
+  }
+
+  function authErrorMessage(err) {
+    var code = (err && err.code) || "";
+    if (code === "auth/popup-closed-by-user") return "로그인 창이 닫혔어요. 다시 시도해주세요.";
+    if (code === "auth/popup-blocked") return "브라우저가 로그인 창을 막았어요. 팝업 차단을 해제하고 다시 시도해주세요.";
+    if (code === "auth/unauthorized-domain") return "이 주소는 아직 구글 로그인이 허용되지 않았어요. Firebase 콘솔의 승인된 도메인 설정을 확인해주세요.";
+    if (code === "auth/network-request-failed") return "네트워크 오류가 발생했어요. 잠시 후 다시 시도해주세요.";
+    return "로그인 중 문제가 발생했어요. 다시 시도해주세요.";
+  }
+
+  if (auth) {
+    $("googleSignInBtn").addEventListener("click", function () {
+      clearAuthError();
+      var provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(function (err) {
+        showAuthError(authErrorMessage(err));
+      });
+    });
+
+    $("logoutBtn").addEventListener("click", function () {
+      auth.signOut();
+    });
+
+    $("goalSetupForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      clearGoalSetupError();
+      var school = $("gsSchool").value.trim();
+      var major = $("gsMajor").value.trim();
+      if (!school || !major) { showGoalSetupError("희망 대학교와 희망 학과를 입력해주세요."); return; }
+      var submitBtn = e.target.querySelector("button[type=submit]");
+      submitBtn.disabled = true;
+      try {
+        await db.collection("users").doc(state.uid).set({
+          targetSchool: school,
+          targetMajor: major,
+          displayName: state.displayName,
+          email: (auth.currentUser && auth.currentUser.email) || null,
+          createdAt: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        showGoalSetupError("저장 중 문제가 발생했어요. 다시 시도해주세요.");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    auth.onAuthStateChanged(function (user) {
+      detachAllListeners();
+      if (!user) {
+        state.uid = null;
+        state.entries = [];
+        state.recommendations = [];
+        state.works = [];
+        showScreen("introScreen");
+        return;
+      }
+      state.uid = user.uid;
+      state.displayName = user.displayName || (user.email ? user.email.split("@")[0] : "학생");
+
+      var userRef = db.collection("users").doc(user.uid);
+      unsubUserDoc = userRef.onSnapshot(function (snap) {
+        var data = snap.exists ? snap.data() : null;
+        if (!data || !data.targetSchool || !data.targetMajor) {
+          showScreen("goalSetupScreen");
+          return;
+        }
+        state.targetSchool = data.targetSchool;
+        state.targetMajor = data.targetMajor;
+        enterApp();
+      }, function () {
+        showGoalSetupError("정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
+        showScreen("goalSetupScreen");
+      });
+    });
+  }
+
+  function attachDataListeners() {
+    var uid = state.uid;
+    unsubEntries = db.collection("users").doc(uid).collection("entries").orderBy("createdAt", "desc")
+      .onSnapshot(function (qs) {
+        state.entries = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        renderEntries();
+      }, function (err) { console.error("entries listener error", err); });
+
+    unsubRecs = db.collection("users").doc(uid).collection("recommendations").orderBy("createdAt", "desc")
+      .onSnapshot(function (qs) {
+        state.recommendations = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        renderRecommendations();
+      }, function (err) { console.error("recommendations listener error", err); });
+
+    unsubWorks = db.collection("users").doc(uid).collection("works").orderBy("createdAt", "desc")
+      .onSnapshot(function (qs) {
+        state.works = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        renderWorks();
+      }, function (err) { console.error("works listener error", err); });
+  }
+
+  function enterApp() {
+    $("topUsername").textContent = state.displayName;
+    var avatar = $("topAvatar");
+    var photoURL = auth.currentUser && auth.currentUser.photoURL;
+    if (photoURL) { avatar.src = photoURL; avatar.hidden = false; } else { avatar.hidden = true; }
+    renderGoal();
+    updateComposerState();
+    attachDataListeners();
+    showScreen("appScreen");
+  }
 
   /* ---------------- goal edit ---------------- */
   $("goalEditBtn").addEventListener("click", function () {
@@ -864,14 +1066,11 @@
       var school = schoolInput.value.trim();
       var major = majorInput.value.trim();
       if (!school || !major) return;
-      state.targetSchool = school;
-      state.targetMajor = major;
-      var users = readJSON(USERS_KEY, {});
-      if (users[state.userId]) {
-        users[state.userId].targetSchool = school;
-        users[state.userId].targetMajor = major;
-        writeJSON(USERS_KEY, users);
-      }
+      try {
+        await db.collection("users").doc(state.uid).update({ targetSchool: school, targetMajor: major });
+        state.targetSchool = school;
+        state.targetMajor = major;
+      } catch (e) {}
       renderGoal();
     });
     cancelBtn.addEventListener("click", renderGoal);
@@ -890,28 +1089,7 @@
     $("goalEditBtn").hidden = false;
   }
 
-  /* ---------------- composer ---------------- */
-  $("entryCategory").addEventListener("change", function () {
-    $("subjectField").hidden = this.value !== "subject";
-  });
-
-  $("entryContent").addEventListener("input", updateComposerState);
-  $("entryConfirm").addEventListener("change", updateComposerState);
-
-  function updateComposerState() {
-    var content = $("entryContent").value.trim();
-    var names = detectNameLike(content);
-    var warnBox = $("entryWarn");
-    if (names.length) {
-      warnBox.hidden = false;
-      warnBox.textContent = "⚠ '" + names.join("', '") + "' 처럼 이름으로 보이는 표현이 있어요. 실제 이름이라면 지워주세요.";
-    } else {
-      warnBox.hidden = true;
-    }
-    $("entryHint").textContent = content.length + "자";
-    $("entrySaveBtn").disabled = !(content.length > 0 && $("entryConfirm").checked);
-  }
-
+  /* ---------------- entries (activity records) ---------------- */
   $("entrySaveBtn").addEventListener("click", async function () {
     var category = $("entryCategory").value;
     var subject = $("entrySubject").value.trim();
@@ -919,10 +1097,7 @@
     if (!content) return;
     this.disabled = true;
     try {
-      var entries = readJSON(ENTRIES_KEY, []);
-      entries.push({
-        id: genId(),
-        username: state.userId,
+      await db.collection("users").doc(state.uid).collection("entries").add({
         category: category,
         subject: subject || null,
         content: content,
@@ -930,36 +1105,17 @@
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
-      writeJSON(ENTRIES_KEY, entries);
       $("entryContent").value = "";
       $("entrySubject").value = "";
       $("entryConfirm").checked = false;
       $("entryWarn").hidden = true;
       $("entryHint").textContent = "";
-      loadEntries();
     } catch (e) {
       $("entryHint").textContent = "저장에 실패했어요. 다시 시도해주세요.";
     } finally {
       updateComposerState();
     }
   });
-
-  /* ---------------- filters ---------------- */
-  $("filterRow").addEventListener("click", function (e) {
-    var btn = e.target.closest(".chip");
-    if (!btn) return;
-    state.filter = btn.dataset.filter;
-    Array.prototype.forEach.call($("filterRow").children, function (c) { c.classList.toggle("active", c === btn); });
-    renderEntries();
-  });
-
-  /* ---------------- entries list ---------------- */
-  function loadEntries() {
-    var all = readJSON(ENTRIES_KEY, []);
-    state.entries = all.filter(function (e) { return e.username === state.userId; });
-    state.entries.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
-    renderEntries();
-  }
 
   function renderEntries() {
     var list = $("entriesList");
@@ -996,16 +1152,12 @@
       saveBtn.addEventListener("click", async function () {
         var newContent = ta.value.trim();
         if (!newContent) return;
-        var entries = readJSON(ENTRIES_KEY, []);
-        var idx = entries.findIndex(function (x) { return x.id === entry.id; });
-        if (idx !== -1) {
-          entries[idx].content = newContent;
-          entries[idx].feedback = null;
-          entries[idx].updatedAt = Date.now();
-          writeJSON(ENTRIES_KEY, entries);
-        }
+        try {
+          await db.collection("users").doc(state.uid).collection("entries").doc(entry.id).update({
+            content: newContent, feedback: null, updatedAt: Date.now()
+          });
+        } catch (e) {}
         state.editingId = null;
-        loadEntries();
       });
       cancelBtn.addEventListener("click", function () { state.editingId = null; renderEntries(); });
       editActions.appendChild(saveBtn);
@@ -1028,10 +1180,8 @@
       var yesBtn = el("button", { className: "btn btn-rose btn-sm", text: "삭제", attrs: { type: "button" } });
       var noBtn = el("button", { className: "btn btn-ghost btn-sm", text: "취소", attrs: { type: "button" } });
       yesBtn.addEventListener("click", async function () {
-        var entries = readJSON(ENTRIES_KEY, []).filter(function (x) { return x.id !== entry.id; });
-        writeJSON(ENTRIES_KEY, entries);
+        try { await db.collection("users").doc(state.uid).collection("entries").doc(entry.id).delete(); } catch (e) {}
         state.confirmingDeleteId = null;
-        loadEntries();
       });
       noBtn.addEventListener("click", function () { state.confirmingDeleteId = null; renderEntries(); });
       confirmWrap.appendChild(yesBtn);
@@ -1079,15 +1229,10 @@
         subject: entry.subject || "",
         content: entry.content
       });
-
-      var entries = readJSON(ENTRIES_KEY, []);
-      var idx = entries.findIndex(function (x) { return x.id === entry.id; });
-      if (idx !== -1) {
-        entries[idx].feedback = result.text;
-        entries[idx].feedbackAt = Date.now();
-        writeJSON(ENTRIES_KEY, entries);
-      }
-      loadEntries();
+      await db.collection("users").doc(state.uid).collection("entries").doc(entry.id).update({
+        feedback: result.text,
+        feedbackAt: Date.now()
+      });
     } catch (err) {
       loadingBlock.innerHTML = "";
       loadingBlock.appendChild(el("div", { className: "feedback-loading", text: apiErrorMessage(err), style: { color: "var(--rose)" } }));
@@ -1097,13 +1242,6 @@
   }
 
   /* ---------------- recommendations (additional activities) ---------------- */
-  function loadRecommendations() {
-    var all = readJSON(RECS_KEY, []);
-    state.recommendations = all.filter(function (r) { return r.username === state.userId; });
-    state.recommendations.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
-    renderRecommendations();
-  }
-
   function renderRecommendations() {
     var list = $("recommendList");
     list.innerHTML = "";
@@ -1128,10 +1266,8 @@
       var yesBtn = el("button", { className: "btn btn-rose btn-sm", text: "삭제", attrs: { type: "button" } });
       var noBtn = el("button", { className: "btn btn-ghost btn-sm", text: "취소", attrs: { type: "button" } });
       yesBtn.addEventListener("click", async function () {
-        var recs = readJSON(RECS_KEY, []).filter(function (x) { return x.id !== batch.id; });
-        writeJSON(RECS_KEY, recs);
+        try { await db.collection("users").doc(state.uid).collection("recommendations").doc(batch.id).delete(); } catch (e) {}
         state.confirmingDeleteRecId = null;
-        loadRecommendations();
       });
       noBtn.addEventListener("click", function () { state.confirmingDeleteRecId = null; renderRecommendations(); });
       confirmWrap.appendChild(yesBtn);
@@ -1181,12 +1317,6 @@
     return card;
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-
   $("recommendBtn").addEventListener("click", async function () {
     var btn = this;
     btn.disabled = true;
@@ -1205,17 +1335,12 @@
       });
       var items = result.items;
       if (!Array.isArray(items) || !items.length) throw { code: "empty_completion" };
-      var recs = readJSON(RECS_KEY, []);
-      recs.push({
-        id: genId(),
-        username: state.userId,
+      await db.collection("users").doc(state.uid).collection("recommendations").add({
         targetSchool: state.targetSchool,
         targetMajor: state.targetMajor,
         items: items,
         createdAt: Date.now()
       });
-      writeJSON(RECS_KEY, recs);
-      loadRecommendations();
       $("recommendStatus").textContent = "";
     } catch (err) {
       $("recommendStatus").textContent = apiErrorMessage(err);
@@ -1224,45 +1349,118 @@
     }
   });
 
-  /* ---------------- boot ---------------- */
-  function enterApp() {
-    $("authScreen").hidden = true;
-    $("appScreen").hidden = false;
-    $("topUsername").textContent = state.username;
-    renderGoal();
-    updateComposerState();
-    loadEntries();
-    loadRecommendations();
-  }
-
-  function boot() {
-    try {
-      var lastUser = localStorage.getItem(LAST_USER_KEY);
-      if (lastUser) $("loginId").value = lastUser;
-    } catch (e) {}
-
-    if (!storageAvailable()) {
-      showAuthError("이 브라우저에서는 로그인 정보를 저장할 수 없어요. 시크릿 모드가 아닌 창에서 열어주세요.");
+  /* ---------------- works (내 작품 페이지) ---------------- */
+  function renderWorks() {
+    var list = $("worksList");
+    list.innerHTML = "";
+    if (!state.works.length) {
+      list.appendChild(el("div", { className: "empty-state", text: "아직 올린 작품이 없어요. 위에서 첫 작품을 올려보세요." }));
       return;
     }
-
-    try {
-      var sessionUid = localStorage.getItem(SESSION_KEY);
-      if (sessionUid) {
-        var users = readJSON(USERS_KEY, {});
-        var rec = users[sessionUid];
-        if (rec) {
-          state.userId = sessionUid;
-          state.username = rec.username;
-          state.targetSchool = rec.targetSchool;
-          state.targetMajor = rec.targetMajor;
-          enterApp();
-        }
-      }
-    } catch (e) {}
+    state.works.forEach(function (w) { list.appendChild(renderWorkCard(w)); });
   }
 
-  boot();
+  function renderWorkCard(w) {
+    var card = el("div", { className: "entry-card", attrs: { "data-id": w.id } });
+
+    var top = el("div", { className: "entry-top" });
+    top.appendChild(el("span", { className: "entry-subject", text: w.type === "file" ? "📎 파일 첨부" : "📝 직접 작성" }));
+    top.appendChild(el("span", { className: "entry-date", text: fmtDate(w.createdAt) }));
+    card.appendChild(top);
+
+    card.appendChild(el("div", { className: "idea-title", text: w.title || "제목 없음", style: { marginBottom: "10px" } }));
+
+    if (w.fileURL) {
+      var link = el("a", {
+        className: "work-file-link",
+        text: "📄 " + (w.fileName || "파일") + " 열기 · 다운로드",
+        attrs: { href: w.fileURL, target: "_blank", rel: "noopener" }
+      });
+      card.appendChild(link);
+    }
+    if (w.textContent) {
+      card.appendChild(el("div", { className: "entry-content", text: w.textContent }));
+    }
+
+    var actions = el("div", { className: "entry-actions" });
+    if (state.confirmingDeleteWorkId === w.id) {
+      var confirmWrap = el("span", { className: "inline-confirm" });
+      confirmWrap.appendChild(el("span", { text: "이 작품을 삭제할까요?" }));
+      var yesBtn = el("button", { className: "btn btn-rose btn-sm", text: "삭제", attrs: { type: "button" } });
+      var noBtn = el("button", { className: "btn btn-ghost btn-sm", text: "취소", attrs: { type: "button" } });
+      yesBtn.addEventListener("click", async function () {
+        try {
+          if (w.filePath) { await storage.ref(w.filePath).delete().catch(function () {}); }
+          await db.collection("users").doc(state.uid).collection("works").doc(w.id).delete();
+        } catch (e) {}
+        state.confirmingDeleteWorkId = null;
+      });
+      noBtn.addEventListener("click", function () { state.confirmingDeleteWorkId = null; renderWorks(); });
+      confirmWrap.appendChild(yesBtn);
+      confirmWrap.appendChild(noBtn);
+      actions.appendChild(confirmWrap);
+    } else {
+      var delBtn = el("button", { className: "btn btn-rose btn-sm", text: "삭제", attrs: { type: "button" } });
+      delBtn.addEventListener("click", function () { state.confirmingDeleteWorkId = w.id; renderWorks(); });
+      actions.appendChild(delBtn);
+    }
+    card.appendChild(actions);
+
+    return card;
+  }
+
+  $("workSaveBtn").addEventListener("click", async function () {
+    var btn = this;
+    $("workError").hidden = true;
+
+    var title = $("workTitle").value.trim();
+    var text = $("workText").value.trim();
+    var fileInput = $("workFile");
+    var file = fileInput.files && fileInput.files[0];
+
+    if (!title) { showWorkError("제목을 입력해주세요."); return; }
+    if (!text && !file) { showWorkError("글을 작성하거나 파일을 첨부해주세요."); return; }
+    if (file && file.size > MAX_FILE_BYTES) { showWorkError("파일은 10MB 이하만 올릴 수 있어요."); return; }
+
+    btn.disabled = true;
+    $("workStatus").textContent = file ? "파일을 업로드하는 중이에요..." : "저장하는 중이에요...";
+    try {
+      var docData = {
+        title: title,
+        type: file ? "file" : "text",
+        textContent: text || null,
+        createdAt: Date.now()
+      };
+      if (file) {
+        var path = "works/" + state.uid + "/" + genId() + "_" + file.name;
+        var ref = storage.ref(path);
+        await ref.put(file);
+        docData.fileURL = await ref.getDownloadURL();
+        docData.fileName = file.name;
+        docData.fileType = file.type || "";
+        docData.filePath = path;
+      }
+      await db.collection("users").doc(state.uid).collection("works").add(docData);
+      $("workTitle").value = "";
+      $("workText").value = "";
+      fileInput.value = "";
+      $("workStatus").textContent = "저장했어요!";
+      setTimeout(function () { $("workStatus").textContent = ""; }, 2500);
+    } catch (e) {
+      showWorkError("업로드에 실패했어요. 다시 시도해주세요.");
+      $("workStatus").textContent = "";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------------- boot ---------------- */
+  loadLayoutMode();
+  if (!configured) {
+    // Firebase 설정 전에는 안내 화면만 보여주고 종료.
+  } else {
+    showScreen("loadingScreen");
+  }
 })();
 </script>
 </body>
