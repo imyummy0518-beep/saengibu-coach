@@ -1447,12 +1447,33 @@
       $("workStatus").textContent = "저장했어요!";
       setTimeout(function () { $("workStatus").textContent = ""; }, 2500);
     } catch (e) {
-      showWorkError("업로드에 실패했어요. 다시 시도해주세요.");
+      console.error("Work upload failed", e && e.code, e && e.message, e);
+      showWorkError(workUploadErrorMessage(e));
       $("workStatus").textContent = "";
     } finally {
       btn.disabled = false;
     }
   });
+
+  function workUploadErrorMessage(e) {
+    var code = (e && e.code) || "";
+    if (code === "storage/unauthorized") {
+      return "업로드 권한이 없어요. Storage 보안 규칙이 게시됐는지, 로그인이 유지되고 있는지 확인해주세요. (storage/unauthorized)";
+    }
+    if (code === "storage/unauthenticated") {
+      return "로그인이 끊겼어요. 새로고침 후 다시 로그인해주세요. (storage/unauthenticated)";
+    }
+    if (code === "storage/unknown" || code === "storage/retry-limit-exceeded") {
+      return "Storage 서버와 통신에 실패했어요. Firebase 콘솔에서 Storage가 Blaze 요금제로 정상 생성됐는지 확인해주세요. (" + code + ")";
+    }
+    if (code === "storage/object-not-found") {
+      return "파일 경로를 찾을 수 없어요. (storage/object-not-found)";
+    }
+    if (code) {
+      return "업로드에 실패했어요 (" + code + "). 다시 시도해주세요.";
+    }
+    return "업로드에 실패했어요. 다시 시도해주세요. (자세한 내용은 브라우저 개발자도구 콘솔을 확인해주세요.)";
+  }
 
   /* ---------------- boot ---------------- */
   loadLayoutMode();
