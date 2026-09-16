@@ -468,6 +468,65 @@
     body:not(.force-desktop) .field-row { flex-direction: column; gap: 0; }
     body:not(.force-desktop) .auth-card { padding: 28px 20px 24px; }
   }
+
+  /* ---------- intro screen: always fixed to a light/white look ---------- */
+  #introScreen {
+    --bg: #FFFFFF;
+    --bg-elevated: #FFFFFF;
+    --bg-sunken: #F3F5F9;
+    --ink: #1D2430;
+    --ink-soft: #5B6478;
+    --ink-faint: #8B93A6;
+    --line: #E1E6EE;
+    background: #FFFFFF;
+  }
+  .intro-wrap { max-width: 620px; }
+  .intro-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0 18px;
+    text-align: left;
+  }
+  .intro-card {
+    background: var(--bg-sunken);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 16px;
+  }
+  .intro-card-icon { font-size: 21px; margin-bottom: 6px; }
+  .intro-card h3 { margin: 0 0 6px; font-size: 15px; font-family: 'Noto Sans KR', sans-serif; font-weight: 700; color: var(--ink); }
+  .intro-card p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+  @media (max-width: 560px) {
+    .intro-cards { grid-template-columns: 1fr; }
+  }
+  body.force-mobile .intro-cards { grid-template-columns: 1fr; }
+  body.force-mobile .intro-wrap { max-width: 100% !important; }
+  body.force-desktop .intro-cards { grid-template-columns: 1fr 1fr; }
+
+  /* ---------- color theme presets (applied inside the app, not on the intro screen) ---------- */
+  :root[data-theme="forest"] { --navy: #2F7D4F; --navy-ink: #1F5C39; --navy-tint: #E3F1E8; }
+  :root[data-theme="burgundy"] { --navy: #8C2F45; --navy-ink: #6B2135; --navy-tint: #F5E3E8; }
+  :root[data-theme="plum"] { --navy: #6B3FA0; --navy-ink: #4F2E78; --navy-tint: #EDE3F7; }
+  @media (prefers-color-scheme: dark) {
+    :root[data-theme="forest"] { --navy: #7FBE9F; --navy-ink: #A8D9BE; --navy-tint: #1B3326; }
+    :root[data-theme="burgundy"] { --navy: #E1919F; --navy-ink: #EFB4BE; --navy-tint: #331E23; }
+    :root[data-theme="plum"] { --navy: #B79AE0; --navy-ink: #D2BEF0; --navy-tint: #2A2140; }
+  }
+
+  /* ---------- theme swatches in settings modal ---------- */
+  .theme-swatches { display: flex; gap: 10px; margin: 4px 0 16px; }
+  .theme-swatch {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .theme-swatch.active { border-color: var(--ink); }
+  .theme-swatch[data-swatch="navy"] { background: #2D3E6B; }
+  .theme-swatch[data-swatch="forest"] { background: #2F7D4F; }
+  .theme-swatch[data-swatch="burgundy"] { background: #8C2F45; }
+  .theme-swatch[data-swatch="plum"] { background: #6B3FA0; }
 </style>
 </head>
 <body>
@@ -477,20 +536,25 @@
 </div>
 
 <div id="introScreen" class="center-screen" hidden>
-  <div class="auth-card">
+  <div class="auth-card intro-wrap">
     <div class="auth-mark">生</div>
     <h1 class="auth-title">생기부 코치</h1>
     <p class="auth-sub">목표 학과에 맞춰 생기부 초고를 다듬는 나만의 노트</p>
-    <div class="intro-list">
-      <strong>이런 걸 도와드려요.</strong>
-      <ul>
-        <li>내가 쓴 생기부 초고를 목표 대학·학과에 맞춰 AI가 첨삭해줘요.</li>
-        <li>아직 하지 않은 활동 중 추가하면 좋은 것을 추천하고, 준비물·진행 방법까지 알려줘요.</li>
-        <li>수행평가 등 내가 만든 작품을 모아두는 '내 작품 페이지'도 있어요 (글, 사진, PDF, 한글파일).</li>
-        <li>실명·사진 등 개인정보는 절대 입력하지 않도록 안내해요.</li>
-      </ul>
+
+    <div class="intro-cards">
+      <div class="intro-card">
+        <div class="intro-card-icon">🎯</div>
+        <h3>이 앱을 만든 이유</h3>
+        <p>내가 쓴 생기부가 잘 작성됐는지 스스로 확인하기는 쉽지 않아요. 생기부 코치는 목표 대학·학과에 맞춰 내 생기부 초고를 점검하고 다듬을 수 있도록 돕기 위해 만들어졌어요.</p>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🌱</div>
+        <h3>이 앱이 바라는 것</h3>
+        <p>이 도구를 통해 더 많은 학생들이 자신의 이야기를 잘 담은, 더 좋은 생기부를 갖게 되길 바라요.</p>
+      </div>
     </div>
-    <p class="auth-note" style="margin-top: 16px;">구글 계정으로 로그인하면 어떤 기기에서든 내 기록을 이어서 볼 수 있어요.</p>
+
+    <p class="auth-note">구글 계정으로 로그인하면 어떤 기기에서든 내 기록을 이어서 볼 수 있어요.</p>
     <button class="btn btn-primary" id="introStartBtn" type="button">시작하기</button>
   </div>
 </div>
@@ -632,20 +696,15 @@
       <div class="card">
         <h2>내 작품 올리기</h2>
         <div class="guideline-box">
-          <strong>수행평가나 직접 만든 작품을 올려보세요.</strong> 글로 바로 써도 되고, 사진·PDF·한글(hwp) 파일을 첨부해도 돼요. 파일은 10MB 이하만 올릴 수 있어요.
+          <strong>수행평가나 직접 만든 작품을 글로 남겨보세요.</strong> 제목과 내용을 적어 저장하면 목록에 쌓여요.
         </div>
         <div class="field">
           <label for="workTitle">제목</label>
           <input id="workTitle" placeholder="예: 과학 탐구보고서 - 식물 생장 실험" />
         </div>
         <div class="field">
-          <label for="workText">직접 작성 (선택)</label>
-          <textarea id="workText" class="textarea-edit" placeholder="내용을 직접 입력하려면 여기에 작성하세요."></textarea>
-        </div>
-        <div class="field">
-          <label for="workFile">파일 첨부 (선택)</label>
-          <input id="workFile" type="file" accept="image/*,.pdf,.hwp,.hwpx" />
-          <div class="hint">사진, PDF, 한글 파일을 올릴 수 있어요 (최대 10MB). 글과 파일을 함께 첨부해도 돼요.</div>
+          <label for="workText">내용</label>
+          <textarea id="workText" class="textarea-edit" placeholder="내용을 여기에 작성하세요."></textarea>
         </div>
         <div id="workError" class="error-msg" hidden></div>
         <button class="btn btn-primary" id="workSaveBtn" type="button" style="width:auto; padding:10px 20px;">작품 올리기</button>
@@ -681,6 +740,16 @@
       <input type="radio" name="layoutMode" value="mobile" />
       <span>폰 화면으로 보기</span>
     </label>
+
+    <h3 style="margin:18px 0 4px;">앱 색상</h3>
+    <p style="font-size:13px; color:var(--ink-soft); margin:0 0 10px;">로그인 후 화면에서 쓰일 색상이에요. (첫 소개 화면은 항상 흰 배경이에요)</p>
+    <div class="theme-swatches" id="themeSwatches">
+      <button class="theme-swatch" data-swatch="navy" type="button" title="네이비 (기본)" aria-label="네이비 (기본)"></button>
+      <button class="theme-swatch" data-swatch="forest" type="button" title="그린" aria-label="그린"></button>
+      <button class="theme-swatch" data-swatch="burgundy" type="button" title="버건디" aria-label="버건디"></button>
+      <button class="theme-swatch" data-swatch="plum" type="button" title="퍼플" aria-label="퍼플"></button>
+    </div>
+
     <button class="btn btn-ghost" id="settingsCloseBtn" type="button" style="width:100%; margin-top:8px;">닫기</button>
   </div>
 </div>
@@ -689,7 +758,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-storage-compat.js"></script>
 
 <script>
 (function () {
@@ -719,7 +787,8 @@
   var SURNAMES = "김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구민진기".split("");
 
   var LAYOUT_KEY = "sgb_layout_mode";
-  var MAX_FILE_BYTES = 10 * 1024 * 1024;
+  var THEME_KEY = "sgb_color_theme";
+  var THEMES = ["navy", "forest", "burgundy", "plum"];
 
   function genId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -865,6 +934,31 @@
     });
   });
 
+  /* ---------------- color theme setting ---------------- */
+  function applyColorTheme(theme) {
+    if (THEMES.indexOf(theme) === -1) theme = "navy";
+    if (theme === "navy") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".theme-swatch"), function (btn) {
+      btn.classList.toggle("active", btn.dataset.swatch === theme);
+    });
+  }
+  function loadColorTheme() {
+    var theme = "navy";
+    try { theme = localStorage.getItem(THEME_KEY) || "navy"; } catch (e) {}
+    applyColorTheme(theme);
+  }
+  $("themeSwatches").addEventListener("click", function (e) {
+    var btn = e.target.closest(".theme-swatch");
+    if (!btn) return;
+    var theme = btn.dataset.swatch;
+    try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    applyColorTheme(theme);
+  });
+
   /* ---------------- intro / auth navigation ---------------- */
   $("introStartBtn").addEventListener("click", function () {
     clearAuthError();
@@ -917,7 +1011,7 @@
 
   /* ---------------- Firebase init ---------------- */
   var configured = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf("여기에") === -1;
-  var auth = null, db = null, storage = null;
+  var auth = null, db = null;
   var unsubUserDoc = null, unsubEntries = null, unsubRecs = null, unsubWorks = null;
 
   if (!configured) {
@@ -930,7 +1024,6 @@
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
-    storage = firebase.storage();
   }
 
   function detachAllListeners() {
@@ -1364,20 +1457,12 @@
     var card = el("div", { className: "entry-card", attrs: { "data-id": w.id } });
 
     var top = el("div", { className: "entry-top" });
-    top.appendChild(el("span", { className: "entry-subject", text: w.type === "file" ? "📎 파일 첨부" : "📝 직접 작성" }));
+    top.appendChild(el("span", { className: "entry-subject", text: "📝 직접 작성" }));
     top.appendChild(el("span", { className: "entry-date", text: fmtDate(w.createdAt) }));
     card.appendChild(top);
 
     card.appendChild(el("div", { className: "idea-title", text: w.title || "제목 없음", style: { marginBottom: "10px" } }));
 
-    if (w.fileURL) {
-      var link = el("a", {
-        className: "work-file-link",
-        text: "📄 " + (w.fileName || "파일") + " 열기 · 다운로드",
-        attrs: { href: w.fileURL, target: "_blank", rel: "noopener" }
-      });
-      card.appendChild(link);
-    }
     if (w.textContent) {
       card.appendChild(el("div", { className: "entry-content", text: w.textContent }));
     }
@@ -1390,7 +1475,6 @@
       var noBtn = el("button", { className: "btn btn-ghost btn-sm", text: "취소", attrs: { type: "button" } });
       yesBtn.addEventListener("click", async function () {
         try {
-          if (w.filePath) { await storage.ref(w.filePath).delete().catch(function () {}); }
           await db.collection("users").doc(state.uid).collection("works").doc(w.id).delete();
         } catch (e) {}
         state.confirmingDeleteWorkId = null;
@@ -1415,68 +1499,47 @@
 
     var title = $("workTitle").value.trim();
     var text = $("workText").value.trim();
-    var fileInput = $("workFile");
-    var file = fileInput.files && fileInput.files[0];
 
     if (!title) { showWorkError("제목을 입력해주세요."); return; }
-    if (!text && !file) { showWorkError("글을 작성하거나 파일을 첨부해주세요."); return; }
-    if (file && file.size > MAX_FILE_BYTES) { showWorkError("파일은 10MB 이하만 올릴 수 있어요."); return; }
+    if (!text) { showWorkError("내용을 작성해주세요."); return; }
 
     btn.disabled = true;
-    $("workStatus").textContent = file ? "파일을 업로드하는 중이에요..." : "저장하는 중이에요...";
+    $("workStatus").textContent = "저장하는 중이에요...";
     try {
       var docData = {
         title: title,
-        type: file ? "file" : "text",
-        textContent: text || null,
+        type: "text",
+        textContent: text,
         createdAt: Date.now()
       };
-      if (file) {
-        var path = "works/" + state.uid + "/" + genId() + "_" + file.name;
-        var ref = storage.ref(path);
-        await ref.put(file);
-        docData.fileURL = await ref.getDownloadURL();
-        docData.fileName = file.name;
-        docData.fileType = file.type || "";
-        docData.filePath = path;
-      }
       await db.collection("users").doc(state.uid).collection("works").add(docData);
       $("workTitle").value = "";
       $("workText").value = "";
-      fileInput.value = "";
       $("workStatus").textContent = "저장했어요!";
       setTimeout(function () { $("workStatus").textContent = ""; }, 2500);
     } catch (e) {
-      console.error("Work upload failed", e && e.code, e && e.message, e);
-      showWorkError(workUploadErrorMessage(e));
+      console.error("Work save failed", e && e.code, e && e.message, e);
+      showWorkError(workSaveErrorMessage(e));
       $("workStatus").textContent = "";
     } finally {
       btn.disabled = false;
     }
   });
 
-  function workUploadErrorMessage(e) {
+  function workSaveErrorMessage(e) {
     var code = (e && e.code) || "";
-    if (code === "storage/unauthorized") {
-      return "업로드 권한이 없어요. Storage 보안 규칙이 게시됐는지, 로그인이 유지되고 있는지 확인해주세요. (storage/unauthorized)";
-    }
-    if (code === "storage/unauthenticated") {
-      return "로그인이 끊겼어요. 새로고침 후 다시 로그인해주세요. (storage/unauthenticated)";
-    }
-    if (code === "storage/unknown" || code === "storage/retry-limit-exceeded") {
-      return "Storage 서버와 통신에 실패했어요. Firebase 콘솔에서 Storage가 Blaze 요금제로 정상 생성됐는지 확인해주세요. (" + code + ")";
-    }
-    if (code === "storage/object-not-found") {
-      return "파일 경로를 찾을 수 없어요. (storage/object-not-found)";
+    if (code === "permission-denied") {
+      return "저장 권한이 없어요. 로그인이 유지되고 있는지 확인해주세요. (permission-denied)";
     }
     if (code) {
-      return "업로드에 실패했어요 (" + code + "). 다시 시도해주세요.";
+      return "저장에 실패했어요 (" + code + "). 다시 시도해주세요.";
     }
-    return "업로드에 실패했어요. 다시 시도해주세요. (자세한 내용은 브라우저 개발자도구 콘솔을 확인해주세요.)";
+    return "저장에 실패했어요. 다시 시도해주세요.";
   }
 
   /* ---------------- boot ---------------- */
   loadLayoutMode();
+  loadColorTheme();
   if (!configured) {
     // Firebase 설정 전에는 안내 화면만 보여주고 종료.
   } else {
